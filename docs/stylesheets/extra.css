@@ -1,0 +1,17 @@
+.md-typeset table:not([class]) {
+  font-size: 0.72rem;
+}
+
+.md-typeset .wiki-summary {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  margin: 1rem 0;
+}
+
+.md-typeset .wiki-summary > p {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.3rem;
+  margin: 0;
+  padding: 0.8rem;
+}
