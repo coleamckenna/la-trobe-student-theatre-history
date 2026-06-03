@@ -1,4 +1,4 @@
-# MUST Production Wiki
+# LTUST Production Wiki
 
 This site turns the public La Trobe University Student Theatre (LTUST)
 production database into a searchable wiki.
