@@ -1,0 +1,6 @@
+# Map source production files to existing GitHub Discussion numbers.
+# After a thread is opened from "Discuss this page", pin it here and rebuild the wiki.
+#
+# Example:
+# ["productions/2017/03/the-light-within-a-night-2017/production.md"]
+# discussion = 42

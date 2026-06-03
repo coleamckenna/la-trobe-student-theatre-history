@@ -20,6 +20,12 @@ productions/
       production.md
 ```
 
+## Statistics
+
+- Productions exported: 2824
+- Rows skipped (no title): 0
+- Slug collisions resolved: 0
+
 ## Wiki site
 
 This repository includes a [Zensical](https://zensical.org/) wiki layer for
@@ -35,6 +41,10 @@ python3 -m pip install -r requirements-docs.txt
 python3 scripts/build_wiki.py
 python3 -m zensical serve
 ```
+
+Set `github.repo` in [`wiki.toml`](wiki.toml) (or rely on `GITHUB_REPOSITORY` in
+Actions) so generated production pages show **Edit this page** and **Discuss this
+page** links. See [docs/contributing.md](docs/contributing.md).
 
 Build the static site into `site/`:
 

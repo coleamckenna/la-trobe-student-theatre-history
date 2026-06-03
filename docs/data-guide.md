@@ -66,3 +66,10 @@ export without editing thousands of derived files.
 The generated wiki is a presentation layer over catalogue metadata. Do not add
 manual edits inside generated production or category pages; edit the source
 export or the generator instead.
+
+## Contributing corrections
+
+Each generated production page includes **Edit this page** (pull request on the
+source `production.md`) and **Discuss this page** (GitHub Discussions). See
+[Contributing](contributing.md) for the full workflow, `wiki.toml` configuration,
+and optional `discussions-map.toml` for pinned discussion threads.

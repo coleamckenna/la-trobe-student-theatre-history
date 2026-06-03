@@ -1,0 +1,13 @@
+# Wiki contribution links (used by scripts/build_wiki.py).
+# In GitHub Actions, GITHUB_REPOSITORY overrides [github].repo when set.
+
+[github]
+# owner/repo — set before publishing; leave empty to omit edit/discuss links locally
+repo = ""
+branch = "main"
+# Slug of a Discussions category (create in repo Settings → Discussions → Categories)
+discussions_category = "historical-corrections-and-contributions"
+
+[site]
+# Optional public wiki base URL, included in pre-filled discussion bodies
+base_url = ""
