@@ -20,12 +20,6 @@ productions/
       production.md
 ```
 
-## Statistics
-
-- Productions exported: 2824
-- Rows skipped (no title): 0
-- Slug collisions resolved: 0
-
 ## Wiki site
 
 This repository includes a [Zensical](https://zensical.org/) wiki layer for
