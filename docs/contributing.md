@@ -34,9 +34,8 @@ without editing the record yet. That is the right place for:
 When evidence is clear, someone updates `production.md` via pull request. The
 discussion thread remains as provenance.
 
-Repository maintainers should enable **Discussions** and create a category such
-as **Historical corrections and contributions** (slug:
-`historical-corrections-and-contributions`). Set the slug in [`wiki.toml`](../wiki.toml).
+Discussions use the **General** category (see [`wiki.toml`](../wiki.toml)). The
+same category powers the Giscus embed on production pages.
 
 ### Pinning a discussion to a page
 
@@ -61,3 +60,11 @@ repository because of copyright. Instead:
   of where material can be accessed
 
 Maintainers can then cite external holdings in **Materials** or **Notes**.
+
+## Giscus on production pages
+
+Each production entry shows a Giscus thread below the contribution footer
+(same **General** category, `pathname` mapping). Configuration is in
+[`docs/javascripts/giscus.js`](../docs/javascripts/giscus.js) and [`wiki.toml`](../wiki.toml)
+(`[giscus]`). **Discuss this page** opens the thread on GitHub; the embed shows
+it inline. Catalogue updates still go through pull requests on `production.md`.

@@ -19,6 +19,7 @@ nav = [
   { "Content notice" = "content-notice.md" },
 ]
 extra_css = ["stylesheets/extra.css"]
+extra_javascript = ["javascripts/giscus.js"]
 
 [project.theme]
 variant = "modern"

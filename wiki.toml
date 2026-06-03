@@ -2,12 +2,21 @@
 # In GitHub Actions, GITHUB_REPOSITORY overrides [github].repo when set.
 
 [github]
-# owner/repo — set before publishing; leave empty to omit edit/discuss links locally
-repo = ""
+repo = "coleamckenna/la-trobe-student-theatre-history"
 branch = "main"
-# Slug of a Discussions category (create in repo Settings → Discussions → Categories)
-discussions_category = "historical-corrections-and-contributions"
+# Slug/name for pre-filled "Discuss this page" links (match your Discussions category)
+discussions_category = "General"
 
 [site]
-# Optional public wiki base URL, included in pre-filled discussion bodies
+# Public wiki URL for pre-filled discussion bodies (set when GitHub Pages is live)
 base_url = ""
+
+[giscus]
+# Embedded via docs/javascripts/giscus.js on production pages only
+repo = "coleamckenna/la-trobe-student-theatre-history"
+repo_id = "R_kgDOSTvE8A"
+category = "General"
+category_id = "DIC_kwDOSTvE8M4C-ayT"
+mapping = "pathname"
+theme = "purple_dark"
+lang = "en"

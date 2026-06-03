@@ -27,3 +27,8 @@
   margin-top: 2rem;
   padding-top: 1.25rem;
 }
+
+.md-typeset .giscus-host {
+  margin-top: 1.5rem;
+  min-height: 150px;
+}
