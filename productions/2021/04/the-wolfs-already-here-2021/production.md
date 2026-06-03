@@ -50,6 +50,10 @@ Cole McKenna and Isabelle Piccolo-Cody
 
 Elly-May Dreier, Ben Rendell, Rachael Taylor
 
+## Media
+
+Poster: https://images.humanitix.com/i/k2Lu8t4KTYiIHwza4tFK@responsive-1250.webp
+
 ## Categories
 
 Devised, Site-specific, Moat
