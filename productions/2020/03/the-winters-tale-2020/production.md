@@ -40,7 +40,7 @@ Bob Pavlich (La Trobe Student Theatre), with initial support by Rosalind Wong (H
 Lighting and sound: Jacob Shears. Costumes and Hong Kong support: Vision Wong. Cantonese opera sung, choreographed and recorded: Vision Wong. Musical direction (Bohemia sections): Paul Doogood.
 
 ## Cast
-Karen Wang (Mother, Hermione), Monica Wat Tsz Yan (Daughter, Mamillius, Perdita), Wincel Sagana Capiendo (Emilia, Mopsa, Cleomenes), Cole McKenna (Polixenes), Kevin Lorenzo Erodias de Guzman (Leontes), Kyo Wing See Cheung (Camilla), Rohit Sharma (Antigonus, Lord), Evangeline Oster (Paulina, Dorcas), Paul Doogood (Shepherd), Lakshmi Ganapathy (Clown), Jayde Hopkins (Autolycus), William Foley (Florizel)
+Karen Wang (Mother, Hermione), Monica Wat Tsz Yan (Daughter, Mamillius, Perdita), Wincel Sagana Capiendo (Emilia, Mopsa, Cleomenes), Cole McKenna (Polixenes), Kevin Lorenzo Erodias de Guzman (Leontes), Kyo Wing See Cheung (Camilla), Rohit Sharma (Antigonus, Lord), Evangeline Oster (Paulina, Dorcas), Paul Doogood (Shepherd), Lakshmi Ganapathy (Clown), Jayde Hopkins (Autolycus), William Foley (Florizel) 
 
 ## Crew
 Stage manager and tech operator: Ujjwal Sharma. Project liaison: Helen Mayers. Photography: Ujjwal Sharma. Performance photos: Melissa Viola (@class.lis).
