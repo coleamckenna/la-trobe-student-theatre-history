@@ -12,6 +12,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import quote, urlencode
 
+from media_embeds import transform_external_media
+
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 WIKI_CONFIG_PATH = REPO_ROOT / "wiki.toml"
@@ -327,6 +329,7 @@ def render_production_page(
     discussions_map: dict[str, int],
 ) -> str:
     body = escape_shortcut_reference_links(production.body.lstrip("\n"))
+    body = transform_external_media(body)
     notice_lines = [
         f"> Metadata-only wiki page generated from `{production.source_rel}`.",
         f"> See the [content notice]({link_between(production.output_rel, Path('content-notice.md'))}) before reusing archive metadata.",
@@ -478,31 +481,26 @@ def render_contribution_footer(
     material_url = contribute_material_url(production, wiki_config)
     contributing = link_between(production.output_rel, Path("contributing.md"))
 
-    lines = [
-        "---",
-        "",
-        '<div class="wiki-contribute-footer">',
-        "",
-        "**Found an error or have additional information?**",
-        "",
-    ]
-
     if edit_url and discuss_url:
-        links = [
-            f"[Edit this page]({edit_url})",
-            f"[Discuss this page]({discuss_url})",
+        link_parts = [
+            f'<a href="{edit_url}">Edit this page</a>',
+            f'<a href="{discuss_url}">Discuss this page</a>',
         ]
         if material_url:
-            links.append(f"[Contribute material]({material_url})")
-        lines.append(" · ".join(links))
+            link_parts.append(f'<a href="{material_url}">Contribute material</a>')
+        links_html = " · ".join(link_parts)
+        body = (
+            "<p><strong>Found an error or have additional information?</strong></p>"
+            f"<p>{links_html}</p>"
+        )
     else:
-        lines.append(
-            f"Configure `wiki.toml` to enable GitHub links, or read "
-            f"[Contributing]({contributing})."
+        body = (
+            "<p><strong>Found an error or have additional information?</strong></p>"
+            "<p>Configure <code>wiki.toml</code> to enable GitHub links, or read "
+            f'<a href="{contributing}">Contributing</a>.</p>'
         )
 
-    lines.extend(["", "</div>", ""])
-    return "\n".join(lines)
+    return "\n".join(["---", "", f'<div class="wiki-contribute-footer">{body}</div>', ""])
 
 
 def escape_shortcut_reference_links(text: str) -> str:
