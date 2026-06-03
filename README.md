@@ -1,4 +1,4 @@
-# MUST production metadata
+# LTUST production metadata
 
 Public, metadata-only database of La Trobe University Student Theatre production
 records. Each production has a `production.md` under `productions/` organised by
