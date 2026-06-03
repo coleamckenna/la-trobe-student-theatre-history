@@ -61,10 +61,3 @@ repository because of copyright. Instead:
   of where material can be accessed
 
 Maintainers can then cite external holdings in **Materials** or **Notes**.
-
-## Optional: discussions on the page (Giscus)
-
-If you want threads visible under articles later, [Giscus](https://giscus.app/)
-can embed GitHub Discussions while keeping the same backend and moderation tools.
-Configure it only after Discussions categories exist; it does not replace pull
-requests for authoritative catalogue updates.
