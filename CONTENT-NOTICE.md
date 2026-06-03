@@ -7,7 +7,7 @@ redistribute archival materials.
 ## What is included
 
 - Structured text fields (title, dates, cast, crew, venue, abstracts, etc.) derived
-  From past students and web sources, source urls linked when available
+  From past students, source urls linked when available
 
 ## What is not included
 

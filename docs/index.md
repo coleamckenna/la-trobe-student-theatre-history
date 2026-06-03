@@ -1,4 +1,4 @@
-# LTUST Production Wiki
+# MUST Production Wiki
 
 This site turns the public La Trobe University Student Theatre (LTUST)
 production database into a searchable wiki.
@@ -12,6 +12,7 @@ pages have been generated from the export.
 - [Browse productions](productions/) by year, month, and undated entries.
 - [Browse categories](categories/) parsed from production metadata.
 - [Read the data guide](data-guide.md) for field and path conventions.
+- [Read how to contribute](contributing.md) — edit records via pull requests, debate on GitHub Discussions.
 - [Read the content notice](content-notice.md) before reusing archive metadata.
 
 ## What is included

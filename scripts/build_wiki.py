@@ -3,16 +3,19 @@
 
 from __future__ import annotations
 
+import os
 import posixpath
 import re
 import shutil
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from urllib.parse import quote
+from urllib.parse import quote, urlencode
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+WIKI_CONFIG_PATH = REPO_ROOT / "wiki.toml"
+DISCUSSIONS_MAP_PATH = REPO_ROOT / "discussions-map.toml"
 SOURCE_ROOT = REPO_ROOT / "productions"
 DOCS_ROOT = REPO_ROOT / "docs"
 DOCS_PRODUCTIONS = DOCS_ROOT / "productions"
@@ -54,9 +57,11 @@ def main() -> None:
     if not SOURCE_ROOT.exists():
         raise SystemExit(f"Missing source directory: {SOURCE_ROOT}")
 
+    wiki_config = load_wiki_config()
+    discussions_map = load_discussions_map()
     productions = read_productions()
     reset_generated_dirs()
-    write_production_pages(productions)
+    write_production_pages(productions, wiki_config, discussions_map)
     write_production_indexes(productions)
     write_category_indexes(productions)
 
@@ -206,15 +211,121 @@ def reset_generated_dirs() -> None:
         directory.mkdir(parents=True)
 
 
-def write_production_pages(productions: list[Production]) -> None:
+def load_wiki_config() -> dict[str, str]:
+    defaults = {
+        "repo": os.environ.get("GITHUB_REPOSITORY", ""),
+        "branch": "main",
+        "discussions_category": "historical-corrections-and-contributions",
+        "base_url": "",
+    }
+    if not WIKI_CONFIG_PATH.exists():
+        return defaults
+
+    file_values = parse_toml_like(WIKI_CONFIG_PATH.read_text(encoding="utf-8"))
+    github = file_values.get("github", {})
+    site = file_values.get("site", {})
+
+    config = {
+        "repo": github.get("repo", defaults["repo"]),
+        "branch": github.get("branch", defaults["branch"]),
+        "discussions_category": github.get(
+            "discussions_category", defaults["discussions_category"]
+        ),
+        "base_url": site.get("base_url", defaults["base_url"]),
+    }
+    if not config["repo"]:
+        config["repo"] = defaults["repo"]
+    return config
+
+
+def load_discussions_map() -> dict[str, int]:
+    if not DISCUSSIONS_MAP_PATH.exists():
+        return {}
+
+    mapping: dict[str, int] = {}
+    current_key: str | None = None
+
+    for raw_line in DISCUSSIONS_MAP_PATH.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+
+        section_match = re.fullmatch(r'\["([^"]+)"\]', line)
+        if section_match:
+            current_key = section_match.group(1)
+            continue
+
+        discussion_match = re.fullmatch(r"discussion\s*=\s*(\d+)", line)
+        if discussion_match and current_key:
+            mapping[current_key] = int(discussion_match.group(1))
+
+    return mapping
+
+
+def parse_toml_like(text: str) -> dict[str, object]:
+    """Parse the small subset of TOML used by wiki.toml and discussions-map.toml."""
+    root: dict[str, object] = {}
+    section: dict[str, object] | None = None
+    section_name = ""
+
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+
+        if line.startswith("[") and line.endswith("]"):
+            section_name = line[1:-1].strip().strip('"')
+            if section_name:
+                section = root.setdefault(section_name, {})
+                if not isinstance(section, dict):
+                    section = {}
+                    root[section_name] = section
+            else:
+                section = None
+            continue
+
+        key, separator, value = line.partition("=")
+        if not separator:
+            continue
+
+        key = key.strip()
+        value = value.strip()
+        if value.startswith('"') and value.endswith('"'):
+            value = value[1:-1]
+        elif value.isdigit():
+            value = int(value)
+
+        if key.startswith('"') and key.endswith('"'):
+            table_key = key[1:-1]
+            if section is None:
+                root[table_key] = value
+            else:
+                section[table_key] = value
+        elif section is None:
+            root[key] = value
+        else:
+            section[key] = value
+
+    return root
+
+
+def write_production_pages(
+    productions: list[Production],
+    wiki_config: dict[str, str],
+    discussions_map: dict[str, int],
+) -> None:
     for production in productions:
         output_path = DOCS_ROOT / production.output_rel
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        content = render_production_page(production)
+        content = render_production_page(production, wiki_config, discussions_map)
         output_path.write_text(content, encoding="utf-8")
 
 
-def render_production_page(production: Production) -> str:
+def render_production_page(
+    production: Production,
+    wiki_config: dict[str, str],
+    discussions_map: dict[str, int],
+) -> str:
     body = escape_shortcut_reference_links(production.body.lstrip("\n"))
     notice_lines = [
         f"> Metadata-only wiki page generated from `{production.source_rel}`.",
@@ -227,17 +338,171 @@ def render_production_page(production: Production) -> str:
         )
 
     notice = "\n".join(notice_lines)
+    toolbar = render_contribution_toolbar(production, wiki_config, discussions_map)
+    footer = render_contribution_footer(production, wiki_config, discussions_map)
 
     if body.startswith("# "):
         heading, _, rest = body.partition("\n")
-        body = f"{heading}\n\n{notice}\n\n{rest.lstrip()}"
+        body = f"{heading}\n\n{toolbar}\n\n{notice}\n\n{rest.lstrip()}"
     else:
-        body = f"# {production.title}\n\n{notice}\n\n{body}"
+        body = f"# {production.title}\n\n{toolbar}\n\n{notice}\n\n{body}"
+
+    body = f"{body.rstrip()}\n\n{footer}\n"
 
     if production.frontmatter:
-        return f"---\n{production.frontmatter}\n---\n\n{body.rstrip()}\n"
+        return f"---\n{production.frontmatter}\n---\n\n{body}"
 
-    return f"{body.rstrip()}\n"
+    return body
+
+
+def github_repo(wiki_config: dict[str, str]) -> str:
+    return wiki_config.get("repo", "").strip()
+
+
+def edit_page_url(production: Production, wiki_config: dict[str, str]) -> str | None:
+    repo = github_repo(wiki_config)
+    if not repo:
+        return None
+    branch = wiki_config.get("branch", "main").strip() or "main"
+    return f"https://github.com/{repo}/edit/{branch}/{production.source_rel}"
+
+
+def discuss_page_url(
+    production: Production,
+    wiki_config: dict[str, str],
+    discussions_map: dict[str, int],
+) -> str | None:
+    repo = github_repo(wiki_config)
+    if not repo:
+        return None
+
+    discussion_number = discussions_map.get(production.source_rel)
+    if discussion_number:
+        return f"https://github.com/{repo}/discussions/{discussion_number}"
+
+    title = discussion_title(production)
+    params: dict[str, str] = {
+        "title": title,
+        "body": discussion_prefill_body(production, wiki_config),
+    }
+    category = wiki_config.get("discussions_category", "").strip()
+    if category:
+        params["category"] = category
+
+    return f"https://github.com/{repo}/discussions/new?{urlencode(params)}"
+
+
+def contribute_material_url(
+    production: Production, wiki_config: dict[str, str]
+) -> str | None:
+    repo = github_repo(wiki_config)
+    if not repo:
+        return None
+
+    title = f"Material contribution: {discussion_title(production)}"
+    body = (
+        f"Production: {production.title}\n"
+        f"Source file: `{production.source_rel}`\n\n"
+        "Describe programs, photographs, reviews, or other material you can share "
+        "(prefer links or where items are held; see the content notice).\n"
+    )
+    return f"https://github.com/{repo}/issues/new?{urlencode({'title': title, 'body': body})}"
+
+
+def discussion_title(production: Production) -> str:
+    year = production.year if production.year.isdigit() else "undated"
+    return f"{production.title} ({year})"
+
+
+def discussion_prefill_body(production: Production, wiki_config: dict[str, str]) -> str:
+    wiki_path = production.output_rel.as_posix()
+    lines = [
+        "### About this page",
+        "",
+        f"**Production:** {production.title}",
+        f"**Source file:** `{production.source_rel}`",
+    ]
+
+    base_url = wiki_config.get("base_url", "").strip().rstrip("/")
+    if base_url:
+        lines.append(f"**Wiki page:** {base_url}/{wiki_path}")
+
+    lines.extend(
+        [
+            "",
+            "Use this thread for disputed dates, cast recollections, missing "
+            "photographs, conflicting sources, or oral history. When evidence is "
+            "clear, please open a pull request to update the catalogue record.",
+            "",
+            "---",
+            "_Opened from the LTUST Production Wiki._",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def render_contribution_toolbar(
+    production: Production,
+    wiki_config: dict[str, str],
+    discussions_map: dict[str, int],
+) -> str:
+    edit_url = edit_page_url(production, wiki_config)
+    discuss_url = discuss_page_url(production, wiki_config, discussions_map)
+    contributing = link_between(production.output_rel, Path("contributing.md"))
+
+    if edit_url and discuss_url:
+        return (
+            '<p class="wiki-contribute">'
+            f'<a href="{edit_url}">Edit this page</a>'
+            " · "
+            f'<a href="{discuss_url}">Discuss this page</a>'
+            "</p>"
+        )
+
+    return (
+        '<p class="wiki-contribute">'
+        f"Contribution links are not configured. See "
+        f'<a href="{contributing}">Contributing</a> and set '
+        "<code>github.repo</code> in <code>wiki.toml</code>."
+        "</p>"
+    )
+
+
+def render_contribution_footer(
+    production: Production,
+    wiki_config: dict[str, str],
+    discussions_map: dict[str, int],
+) -> str:
+    edit_url = edit_page_url(production, wiki_config)
+    discuss_url = discuss_page_url(production, wiki_config, discussions_map)
+    material_url = contribute_material_url(production, wiki_config)
+    contributing = link_between(production.output_rel, Path("contributing.md"))
+
+    lines = [
+        "---",
+        "",
+        '<div class="wiki-contribute-footer">',
+        "",
+        "**Found an error or have additional information?**",
+        "",
+    ]
+
+    if edit_url and discuss_url:
+        links = [
+            f"[Edit this page]({edit_url})",
+            f"[Discuss this page]({discuss_url})",
+        ]
+        if material_url:
+            links.append(f"[Contribute material]({material_url})")
+        lines.append(" · ".join(links))
+    else:
+        lines.append(
+            f"Configure `wiki.toml` to enable GitHub links, or read "
+            f"[Contributing]({contributing})."
+        )
+
+    lines.extend(["", "</div>", ""])
+    return "\n".join(lines)
 
 
 def escape_shortcut_reference_links(text: str) -> str:
