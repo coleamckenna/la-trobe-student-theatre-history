@@ -46,6 +46,30 @@ Common body sections:
 - Categories
 - Materials
 - Location
+- Media (optional — photos, videos, programmes linked by URL)
+
+## External media embeds
+
+List stable URLs in **Materials**, **Notes**, or **Media** (plain URL, `Label: URL`, or
+`[label](url)`). When the wiki is built, known hosts are turned into inline embeds on
+the generated page; the files stay on the original site (Wayback, Internet Archive,
+YouTube, and so on).
+
+Supported in v1:
+
+- Archived images and PDFs on `web.archive.org`
+- Internet Archive `archive.org/details/...` items
+- YouTube and Vimeo
+- Direct image URLs (`.jpg`, `.png`, `.gif`, `.webp`, …)
+- PDFs on other hosts (iframe where allowed)
+- `images.humanitix.com` (event graphics)
+
+Link only (no iframe): public `events.humanitix.com` pages, Facebook, Instagram,
+Issuu, and other hosts that block embedding. For Humanitix checkout on your site, paste
+the official **embed widget** `src` from the Humanitix dashboard into **Media** — not
+the public event listing URL.
+
+Prefer Wayback permalinks for longevity. Broken upstream URLs may show empty embeds.
 
 ## Generated indexes
 

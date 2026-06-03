@@ -28,7 +28,59 @@
   padding-top: 1.25rem;
 }
 
+.md-typeset .wiki-contribute-footer p {
+  margin: 0.35rem 0;
+}
+
 .md-typeset .giscus-host {
   margin-top: 1.5rem;
   min-height: 150px;
+}
+
+.md-typeset .wiki-embed {
+  margin: 1rem 0 1.25rem;
+  max-width: 100%;
+}
+
+.md-typeset .wiki-embed--image img {
+  border-radius: 0.25rem;
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
+.md-typeset .wiki-embed--image figcaption,
+.md-typeset .wiki-embed-caption {
+  color: var(--md-default-fg-color--light);
+  font-size: 0.8rem;
+  margin: 0.5rem 0 0;
+}
+
+.md-typeset .wiki-embed--iframe {
+  aspect-ratio: 16 / 9;
+  background: var(--md-default-fg-color--lightest);
+  border-radius: 0.25rem;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.md-typeset .wiki-embed--iframe iframe {
+  border: 0;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.md-typeset .wiki-embed--pdf {
+  aspect-ratio: 3 / 4;
+  max-height: 80vh;
+}
+
+@media print {
+  .md-typeset .wiki-embed--iframe iframe {
+    display: none;
+  }
 }
