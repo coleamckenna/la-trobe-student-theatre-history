@@ -17,4 +17,13 @@ Where `source_url` appears in a production file, it points to the web source. Ri
 their respective creators, not with the
 MIT license that covers this repository's **structure and scripts**.
 
+## Inline embeds on the published wiki
+
+The wiki generator may render **embedded viewers** for URLs listed in **Materials**,
+**Notes**, or **Media**. Those embeds load content from the linked host at view time;
+this repository still does not store or redistribute the underlying files. Contributors
+should only link material they have the right to reference. Prefer stable archive URLs
+(Wayback, Internet Archive). If an upstream file is removed, the embed may appear empty
+while the citation link remains.
+
 
