@@ -1,0 +1,88 @@
+catalog:
+  id: ltst
+  sqlite_file: ltst.sqlite
+title: La Trobe Student Theatre History
+description_html: |
+  Open catalog of student theatre productions at La Trobe University.
+  Browse productions, people, organisations, venues, and linked archival materials.
+license: CC-BY-4.0
+license_url: https://creativecommons.org/licenses/by/4.0/
+source: https://la-trobe-history.student-theatre.com
+extra_css_urls:
+  - url: /static/catalog.css
+databases:
+  ltst:
+    description: La Trobe University student theatre catalog
+    tables:
+      institutions:
+        hidden: true
+      productions:
+        label_column: title
+        facets:
+          year:
+            type: column
+          confidence:
+            type: column
+      organisations:
+        label_column: name
+      venues:
+        label_column: name
+      people:
+        label_column: first_credited_as
+      production_people:
+        label_column: credited_as
+        facets:
+          role:
+            type: column
+          production_id:
+            type: column
+          person_id:
+            type: column
+      materials:
+        label_column: id
+        facets:
+          material_type:
+            type: column
+      material_files:
+        label_column: page_note
+        sort: sort_order
+      production_organisations:
+        hidden: true
+      production_venues:
+        hidden: true
+      production_materials:
+        hidden: true
+    queries:
+      productions_by_year:
+        title: Productions by year
+        sql: |
+          SELECT id, title, year, confidence, source
+          FROM productions
+          ORDER BY year, title
+      person_productions:
+        title: Productions for a person
+        sql: |
+          SELECT
+            pp.credited_as,
+            pp.role,
+            p.title AS production,
+            p.year,
+            pp.production_id
+          FROM production_people pp
+          JOIN productions p ON p.id = pp.production_id
+          WHERE pp.person_id = :person_id
+          ORDER BY p.year, p.title
+        params:
+          - person_id
+      materials_with_page_counts:
+        title: Materials with page counts
+        sql: |
+          SELECT
+            m.id,
+            m.material_type,
+            m.source,
+            COUNT(mf.id) AS page_count
+          FROM materials m
+          LEFT JOIN material_files mf ON mf.material_id = m.id
+          GROUP BY m.id
+          ORDER BY m.id

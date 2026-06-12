@@ -1,0 +1,29 @@
+catalog:
+  id: ltst
+  sqlite_file: ltst.sqlite
+
+paths:
+  catalog_csv: catalog
+  metadata: config/metadata.yaml
+  metadata_public: config/metadata.public.yaml
+  content_pages: content/pages
+
+institution:
+  id: ltst
+  name: "La Trobe University Student Theatre"
+
+site:
+  title: "La Trobe Student Theatre History"
+  source: https://la-trobe-history.student-theatre.com
+  license: CC-BY-4.0
+  license_url: https://creativecommons.org/licenses/by/4.0/
+
+workers:
+  datasette_name: ltst-catalog
+  contribute_name: ltst-contribute
+  allowed_origin: https://la-trobe-history.student-theatre.com
+  email_subject_prefix: "La Trobe Student Theatre History"
+
+theme:
+  css_file: catalog.css
+  css_class_prefix: stc

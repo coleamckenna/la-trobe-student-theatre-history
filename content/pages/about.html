@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}About — {{ metadata.title }}{% endblock %}
+
+{% block content %}
+<h1>About</h1>
+
+<p>This project documents the history of <strong>student theatre at La Trobe University</strong> — productions, people, organisations, venues, and linked archival materials such as program scans.</p>
+
+<h2>What this is</h2>
+<ul>
+  <li>An <strong>open dataset</strong> (<a href="/{{ catalog_id }}/{{ catalog_id }}">download <code>{{ sqlite_filename }}</code></a>) that anyone can query</li>
+  <li>A <strong>Datasette</strong> catalog for exploring relationships (productions ↔ people ↔ materials)</li>
+  <li>Pretty pages at <code>/{slug}</code> for productions, people, organisations, and venues</li>
+</ul>
+
+<h2>Data sources</h2>
+<p>Production and credit data comes from research into La Trobe student theatre archives, including program scans hosted at <a href="https://ltst.net.au/programs">ltst.net.au</a>. Images and files are <strong>not stored in this repository</strong> — they are linked to their original hosts.</p>
+
+<h2>Scope</h2>
+<p>The current dataset covers six productions from 1975–1978, with full cast lists and program scans. The schema is designed so additional productions — and eventually other universities — can be added under the same structure.</p>
+
+{% if contribute_api_url %}
+<p>You can <a href="/contribute">submit corrections and additions</a> via the contribution form. Submissions are reviewed before appearing in the catalog.</p>
+<p><a href="/">← Home</a> · <a href="/contribute">Contribute</a></p>
+{% else %}
+<p>Catalog data is maintained in git and published as a read-only site. Contribution tools are available to maintainers in the local development environment only.</p>
+<p><a href="/">← Home</a> · <a href="/{{ catalog_id }}/{{ catalog_id }}">Download data</a></p>
+{% endif %}
+{% endblock %}
