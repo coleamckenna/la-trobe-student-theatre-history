@@ -1,0 +1,4 @@
+[submodule "framework"]
+	path = framework
+	url = https://github.com/YOUR_ORG/student-theatre-catalog.git
+	branch = main
