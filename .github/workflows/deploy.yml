@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    env:
-      CATALOG_INSTANCE: instances/la-trobe/config/instance.yaml
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - uses: actions/setup-python@v5
         with:
@@ -24,11 +24,16 @@ jobs:
       - name: Install pywrangler
         run: uv pip install --system workers-py
 
-      - name: Bundle datasette worker
-        run: ./scripts/bundle-datasette-worker.sh
+      - name: Build and bundle
+        env:
+          CATALOG_INSTANCE: config/instance.yaml
+        run: |
+          ./scripts/build.sh
+          ./scripts/bundle.sh
 
       - name: Deploy to Cloudflare Workers
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: cd datasette-worker && pywrangler deploy
+        working-directory: framework/datasette-worker
+        run: pywrangler deploy
