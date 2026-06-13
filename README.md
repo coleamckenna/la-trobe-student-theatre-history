@@ -1,55 +1,62 @@
-# LTUST production metadata
+# La Trobe Student Theatre History
 
 Public, metadata-only database of La Trobe University Student Theatre production
-records. Each production has a `production.md` under `productions/` organised by
-**year** and **month of first performance** (or `undated/` when unknown).
+records. A collection of information about productions at La Trobe University, from sources on the internet.
 
 See [CONTENT-NOTICE.md](CONTENT-NOTICE.md) for copyright boundaries. Programs and
 images are **not** included in this repository.
 
-## Layout
+## Public site 
 
-```text
-productions/
-  YYYY/
-    MM/              # 00 = year known, month unknown
-      <slug>/
-        production.md
-  undated/
-    <slug>/
-      production.md
-```
+[La Trobe Student Theatre History](https://www.la-trobe-history.student-theatre.com)
 
-## Statistics
+The public catalog is **live Datasette** on a Cloudflare Python Worker:
 
-- Productions exported: 2824
-- Rows skipped (no title): 0
-- Slug collisions resolved: 0
+data/catalog/*.csv → data/build.py → ltst.sqlite → datasette-worker bundle → pywrangler deploy
 
-## Wiki site
+### Maintainer workflow
 
-This repository includes a [Zensical](https://zensical.org/) wiki layer for
-browsing and searching the metadata export. Generated wiki pages are written
-under `docs/productions/` and `docs/categories/`, which are ignored by Git and
-can be rebuilt from the source export at any time.
+1. Edit CSV files in `data/catalog/`
+2. Commit and push to `main` — CI rebuilds and redeploys.
 
-Install the documentation dependency, generate the wiki pages, and preview the
-site locally:
+**Canonical data in git:** `data/catalog/productions.csv`, `organisations.csv`, `people.csv`, `materials.csv`.
+
+## URL map
+
+### Public site (Datasette Worker)
+
+| URL | Content |
+|-----|---------|
+| `/` | Homepage with production list |
+| `/{slug}` | Production, person, organisation, or venue page |
+| `/about` | About the project |
+| `/ltst/` | Datasette table browser |
+| `/ltst/ltst` | Download SQLite database |
+| `/ltst/*.json` | Datasette JSON APIs |
+
+Examples: `/the-white-rabbit-show-1975`, `/barry-ziegler`, `/org-drama-group`, `/venue-menzies`
+
+## Licenses
+
+| Path | License |
+|------|---------|
+| `catalog/*.csv` | [CC-BY-4.0](catalog/LICENSE) |
+| `scripts/`, `.github/` | MIT (see LICENSE) |
+| `framework/` | MIT (submodule) |
+
+## Setup
 
 ```bash
-python3 -m pip install -r requirements-docs.txt
-python3 scripts/build_wiki.py
-python3 -m zensical serve
+git submodule update --init --recursive
+python3 -m venv framework/.venv
+framework/.venv/bin/pip install -r framework/requirements.txt
+./scripts/preview.sh
 ```
 
-Set `github.repo` in [`wiki.toml`](wiki.toml) (or rely on `GITHUB_REPOSITORY` in
-Actions) so generated production pages show **Edit this page** and **Discuss this
-page** links. See [docs/contributing.md](docs/contributing.md).
+## Maintainer workflow
 
-Build the static site into `site/`:
+1. Edit `catalog/*.csv`
+2. `./scripts/preview.sh` or `./scripts/build.sh`
+3. Push to `main` — CI deploys the Worker
 
-```bash
-python3 scripts/build_wiki.py
-python3 -m zensical build
-```
-
+Public site: https://la-trobe-history.student-theatre.com

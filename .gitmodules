@@ -1,0 +1,4 @@
+[submodule "framework"]
+	path = framework
+	url = https://github.com/coleamckenna/student-theatre-web-database.git
+	branch = main
