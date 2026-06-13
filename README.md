@@ -36,10 +36,6 @@ data/catalog/*.csv → data/build.py → ltst.sqlite → datasette-worker bundle
 
 Examples: `/the-white-rabbit-show-1975`, `/barry-ziegler`, `/org-drama-group`, `/venue-menzies`
 
-# La Trobe Student Theatre History (data instance)
-
-CC-BY-4.0 catalog data and deployment config for [student-theatre-catalog](https://github.com/YOUR_ORG/student-theatre-catalog).
-
 ## Licenses
 
 | Path | License |
