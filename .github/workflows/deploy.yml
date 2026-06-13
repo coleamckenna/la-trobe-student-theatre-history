@@ -24,6 +24,9 @@ jobs:
       - name: Install pywrangler
         run: uv pip install --system workers-py
 
+      - name: Install build dependencies
+        run: uv pip install -r framework/requirements.txt
+
       - name: Build and bundle
         env:
           CATALOG_INSTANCE: config/instance.yaml
