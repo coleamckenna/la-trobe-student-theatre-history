@@ -1,0 +1,17 @@
+[Unit]
+Description=La Trobe Student Theatre History (Datasette)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=dietpi
+Group=dietpi
+WorkingDirectory=/mnt/usb/la-trobe-student-theatre-history
+Environment=CATALOG_INSTANCE=/mnt/usb/la-trobe-student-theatre-history/config/instance.yaml
+ExecStart=/mnt/usb/la-trobe-student-theatre-history/scripts/serve.sh
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
