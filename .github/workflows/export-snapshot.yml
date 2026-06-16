@@ -1,0 +1,65 @@
+name: Export CSV snapshot
+
+on:
+  schedule:
+    - cron: "0 8 * * 0"
+  workflow_dispatch:
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fossil
+          pip install pyyaml
+
+      - name: Pull canonical database from Fossil
+        env:
+          FOSSIL_REPO_URL: ${{ secrets.FOSSIL_REPO_URL }}
+        run: |
+          if [[ -z "$FOSSIL_REPO_URL" ]]; then
+            echo "Error: FOSSIL_REPO_URL secret is not set" >&2
+            exit 1
+          fi
+          fossil clone "$FOSSIL_REPO_URL" ltst-data.fossil
+          fossil open ltst-data.fossil _fossil_checkout
+          cp _fossil_checkout/ltst.sqlite ltst.sqlite
+
+      - name: Export CSV
+        env:
+          CATALOG_INSTANCE: config/instance.yaml
+        run: |
+          SNAPSHOT_DATE="$(date -u +%Y-%m-%d)"
+          python3 framework/catalog/export.py \
+            --config config/instance.yaml \
+            --db ltst.sqlite \
+            --catalog "catalog/snapshots/${SNAPSHOT_DATE}"
+          python3 framework/catalog/export.py \
+            --config config/instance.yaml \
+            --db ltst.sqlite \
+            --catalog catalog
+          echo "SNAPSHOT_DATE=${SNAPSHOT_DATE}" >> "$GITHUB_ENV"
+
+      - name: Commit snapshot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add catalog/
+          if git diff --staged --quiet; then
+            echo "No CSV changes to commit"
+            exit 0
+          fi
+          git commit -m "CSV snapshot ${SNAPSHOT_DATE}"
+          git push
