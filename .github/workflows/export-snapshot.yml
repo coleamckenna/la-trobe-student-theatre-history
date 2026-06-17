@@ -33,8 +33,7 @@ jobs:
             echo "Error: FOSSIL_REPO_URL secret is not set" >&2
             exit 1
           fi
-          fossil clone "$FOSSIL_REPO_URL" ltst-data.fossil
-          fossil open ltst-data.fossil _fossil_checkout
+          fossil clone "$FOSSIL_REPO_URL" _fossil_checkout
           cp _fossil_checkout/ltst.sqlite ltst.sqlite
 
       - name: Export CSV
