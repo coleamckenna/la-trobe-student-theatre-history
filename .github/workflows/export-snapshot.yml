@@ -24,7 +24,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y fossil
           pip install pyyaml
-
+          
       - name: Pull canonical database from Fossil
         env:
           FOSSIL_REPO_URL: ${{ secrets.FOSSIL_REPO_URL }}
@@ -33,9 +33,10 @@ jobs:
             echo "Error: FOSSIL_REPO_URL secret is not set" >&2
             exit 1
           fi
-          fossil clone "$FOSSIL_REPO_URL" _fossil_checkout
-          test -f _fossil_checkout/ltst.sqlite
-          cp _fossil_checkout/ltst.sqlite ltst.sqlite
+          CLONE_DIR="$(mktemp -d)"
+          fossil clone "$FOSSIL_REPO_URL" "$CLONE_DIR/repo"
+          test -f "$CLONE_DIR/repo/ltst.sqlite"
+          cp "$CLONE_DIR/repo/ltst.sqlite" ltst.sqlite
 
       - name: Export CSV
         env:
