@@ -40,9 +40,9 @@ jobs:
             exit 1
           fi
           CLONE_DIR="$(mktemp -d)"
-          fossil clone "$FOSSIL_REPO_URL" "$CLONE_DIR/repo"
-          test -f "$CLONE_DIR/repo/ltst.sqlite"
-          cp "$CLONE_DIR/repo/ltst.sqlite" ltst.sqlite
+          fossil clone "$FOSSIL_REPO_URL" "$CLONE_DIR/ltst.fossil"
+          fossil cat ltst.sqlite -R "$CLONE_DIR/ltst.fossil" > ltst.sqlite
+          test -s ltst.sqlite || { echo "Error: ltst.sqlite missing or empty" >&2; exit 1; }
 
       - name: Export, rebuild, and verify
         env:
