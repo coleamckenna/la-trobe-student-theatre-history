@@ -18,8 +18,6 @@ ltst.sqlite (Fossil) → Pi fossil-sync → Datasette → cloudflared → Intern
 
 Weekly CSV snapshots in `catalog/` are exported from Fossil by GitHub Actions for open-data publishing.
 
-See [docs/DATA_WORKFLOW.md](docs/DATA_WORKFLOW.md) for the full data and deploy model.
-
 ## URL map
 
 
